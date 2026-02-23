@@ -103,7 +103,7 @@ let enemy = {
     y: 0,
     width: 60,
     height: 60,
-    speed: 1000
+    speed: 100
 };
 
 document.getElementById("startBtn").onclick = function () {
@@ -157,7 +157,7 @@ document.addEventListener("mousemove", function(e) {
 });
 
 function update() {
-    enemy.y += 50;
+    enemy.y += enemy.speed;
 
     if (enemy.y > canvas.height) {
         enemy.y = 0;
@@ -216,6 +216,7 @@ function restartGame() {
 
 </body>
 </html>
+
 
 
 
