@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Game</title>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    background: black;
+    touch-action: none;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+#startBtn {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    padding: 15px 30px;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+#nicknameScreen, #gameOverScreen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    color: white;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 20;
+    font-size: 22px;
+}
+</style>
+</head>
+<body>
+
+<canvas id="gameCanvas"></canvas>
+<button id="startBtn">시작</button>
+
+<div id="nicknameScreen">
+    <h2>닉네임을 입력하라 이기</h2>
+    <input type="text" id="nicknameInput">
+    <button onclick="startGame()">확인</button>
+</div>
+
+<div id="gameOverScreen">
+    <div id="gameOverText"></div>
+    <button onclick="restartGame()">다시 시작</button>
+</div>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+let gameState = "start";
+let score = 0;
+let playerName = "";
+
+/* 이미지 */
+let startImg = new Image();
+startImg.src = "p1.jpg";
+
+let enemyImg = new Image();
+enemyImg.src = "p2.jpg";
+
+let playerImg1 = new Image();
+playerImg1.src = "p3.jpg";
+
+let playerImg2 = new Image();
+playerImg2.src = "p4.jpg";
+
+let playerImg;
+
+let player = {
+    x: 100,
+    y: 0,
+    width: 80,
+    height: 80
+};
+
+let enemy = {
+    x: 200,
+    y: 0,
+    width: 60,
+    height: 60,
+    speed: 5
+};
+
+document.getElementById("startBtn").onclick = function () {
+    document.getElementById("nicknameScreen").style.display = "flex";
+    document.getElementById("startBtn").style.display = "none";
+};
+
+function startGame() {
+    playerName = document.getElementById("nicknameInput").value;
+    if (!playerName) {
+        alert("닉네임 입력해라 이기");
+        return;
+    }
+
+    document.getElementById("nicknameScreen").style.display = "none";
+    gameState = "play";
+
+    playerImg = Math.random() < 0.5 ? playerImg1 : playerImg2;
+
+    player.y = canvas.height - 120;
+    player.x = canvas.width / 2 - 40;
+
+    enemy.y = 0;
+    enemy.x = Math.random() * (canvas.width - enemy.width);
+    score = 0;
+
+    requestAnimationFrame(gameLoop);
+}
+
+/* 모바일 터치 이동 */
+canvas.addEventListener("touchmove", function(e) {
+    if (gameState !== "play") return;
+
+    let touch = e.touches[0];
+    player.x = touch.clientX - player.width / 2;
+
+    if (player.x < 0) player.x = 0;
+    if (player.x > canvas.width - player.width)
+        player.x = canvas.width - player.width;
+});
+
+/* PC도 가능 */
+document.addEventListener("mousemove", function(e) {
+    if (gameState !== "play") return;
+
+    player.x = e.clientX - player.width / 2;
+
+    if (player.x < 0) player.x = 0;
+    if (player.x > canvas.width - player.width)
+        player.x = canvas.width - player.width;
+});
+
+function update() {
+    enemy.y += enemy.speed;
+
+    if (enemy.y > canvas.height) {
+        enemy.y = 0;
+        enemy.x = Math.random() * (canvas.width - enemy.width);
+        score++;
+    }
+
+    if (
+        player.x < enemy.x + enemy.width &&
+        player.x + player.width > enemy.x &&
+        player.y < enemy.y + enemy.height &&
+        player.y + player.height > enemy.y
+    ) {
+        gameOver();
+    }
+}
+
+function gameLoop() {
+    if (gameState !== "play") return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    update();
+
+    ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+    ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy.width, enemy.height);
+
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText("Score: " + score, 20, 30);
+
+    requestAnimationFrame(gameLoop);
+}
+
+function drawStartScreen() {
+    if (gameState === "start") {
+        ctx.drawImage(startImg, 0, 0, canvas.width, canvas.height);
+    }
+    requestAnimationFrame(drawStartScreen);
+}
+drawStartScreen();
+
+function gameOver() {
+    gameState = "over";
+    document.getElementById("gameOverScreen").style.display = "flex";
+    document.getElementById("gameOverText").innerHTML =
+        playerName + "게이<br>점수: " + score;
+}
+
+function restartGame() {
+    document.getElementById("gameOverScreen").style.display = "none";
+    document.getElementById("startBtn").style.display = "block";
+    gameState = "start";
+}
+</script>
+
+</body>
+</html>
