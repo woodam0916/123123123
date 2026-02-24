@@ -92,6 +92,8 @@ playerImg2.src = "p4.jpg";
 let bgimg = new Image();
 bgimg.src = "p6.jpg";
 
+const hitSound = new Audio("hit.mp3");
+
 let playerImg;
 
 let player = {
@@ -174,6 +176,7 @@ function update() {
         player.y < enemy.y + enemy.height &&
         player.y + player.height > enemy.y
     ) {
+        hitSound.play();
         gameOver();
     }
 }
@@ -220,6 +223,7 @@ function restartGame() {
 
 </body>
 </html>
+
 
 
 
