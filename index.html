@@ -89,6 +89,9 @@ playerImg1.src = "p3.jpg";
 let playerImg2 = new Image();
 playerImg2.src = "p4.jpg";
 
+let playerImg2 = new Image();
+playerImg2.src = "p5.jpg";
+
 let playerImg;
 
 let player = {
@@ -194,6 +197,7 @@ function gameLoop() {
 
 function drawStartScreen() {
     if (gameState === "start") {
+        ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
         ctx.drawImage(startImg, 0, 0, canvas.width, canvas.height);
     }
     requestAnimationFrame(drawStartScreen);
@@ -216,6 +220,7 @@ function restartGame() {
 
 </body>
 </html>
+
 
 
 
