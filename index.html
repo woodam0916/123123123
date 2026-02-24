@@ -181,13 +181,12 @@ function update() {
 function gameLoop() {
     if (gameState !== "play") return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    ctx.drawImage(bgimg, 0, 0, canvas.width, canvas.height);
+    
     update();
 
     ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
     ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy.width, enemy.height);
-    ctx.drawImage(bgimg, 0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "white";
     ctx.font = "20px Arial";
@@ -220,6 +219,7 @@ function restartGame() {
 
 </body>
 </html>
+
 
 
 
